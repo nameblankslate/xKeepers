@@ -1,0 +1,100 @@
+version: '3.8'
+
+
+# This file starts many containers where each container specifies the
+# source file for the keeper to run (without the .js suffix). Comment out
+# the containers of the keepers that you do not want to use.
+
+# - NOTE: You should be running the `state_keeper` in LOOP mode to keep
+#   fetching new data and the `mongodb` container to store the data
+# - You can run all the keepers with `docker-compose up -d`
+# - You can run one keeper with `docker-compose up -d "name_of_container"`
+
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    # for dev
+    ports:
+      - 7070:27017
+
+  state_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 7071:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=false
+      - FREQUENCY=60
+      - KEEPER=state_keeper
+
+  collect_fees_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 7072:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=true
+      - FREQUENCY=40
+      - KEEPER=collect_fees_keeper
+
+  liquidate_vault_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 7073:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=false
+      - FREQUENCY=60
+      - KEEPER=liquidate_vault_keeper
+
+  propose_redemption_vault_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 8084:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=false
+      - FREQUENCY=60
+      - KEEPER=propose_redemption_vault_keeper
+
+  redemption_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 7074:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=false
+      - FREQUENCY=60
+      - KEEPER=redemption_keeper
+
+  settle_interest_keeper:
+    build:
+      context: ./
+    depends_on:
+      - mongodb
+    ports:
+      - 7075:80
+    environment:
+      - ALGO_WALLET_SEED_PHRASE=${ALGO_WALLET_SEED_PHRASE}
+      - LOOP=false
+      - FREQUENCY=60
+      - KEEPER=settle_interest_keeper

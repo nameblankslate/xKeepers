@@ -1,0 +1,15 @@
+{
+  "name": "xbacked-bot",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "@xbacked-dao/xbacked-sdk": "0.0.30",
+    "axios": "^0.26.1",
+    "mongodb": "^4.5.0"
+  }
+}
